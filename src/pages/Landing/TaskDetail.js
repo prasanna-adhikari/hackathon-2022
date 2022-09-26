@@ -5,7 +5,7 @@ import { publicFetch } from "../../utils/fetch";
 import FILE_URL from "../../utils/fileURL";
 import dayjs from "dayjs";
 import moment from "moment";
-export default function Test() {
+export default function TaskDetail() {
   const location = useLocation();
   const [tasks, setTasks] = useState([]);
   const [files, setFiles] = useState([]);
