@@ -36,78 +36,98 @@ export default function TaskDetail() {
       console.log(err.response);
     }
   };
+
+  const deleteFile = async (id) => {
+    try {
+      const response = await publicFetch.delete(`/delete-file/${id}`);
+      console.log(response.data);
+      getFiles();
+    } catch (err) {
+      console.log(err.response);
+    }
+  };
+
   const uploadFile = async () => {
     const beforeOneDay = dayjs().subtract(1, "day").format("YYYYMMDD");
     const twoDayBefore = dayjs().subtract(2, "day").format("YYYYMMDD");
     try {
       const fd = new FormData();
+      const filePattern = filePath.name;
       fd.set("task", url);
       fd.set("filePath", filePath);
       const response = await publicFetch.post(`/add-file`, fd);
       const DSRfileGetResponse = await publicFetch.get(
         `/search-file/${url}?search=dsr_note`
       );
-      console.log(DSRfileGetResponse);
       const GeminifileGetResponse = await publicFetch.get(
         `/search-file/${url}?search=gemini_report`
       );
-      console.log(GeminifileGetResponse.data.result[0]);
-      console.log(GeminifileGetResponse.data);
-      const latestGeminiFile = GeminifileGetResponse.data.result[0].fileName;
-      console.log(DSRfileGetResponse.data.result.length <= 0);
-      if (DSRfileGetResponse.data.result.length > 0) {
-        console.log("wat");
-        const latestDSRFile = DSRfileGetResponse?.data?.result[0]?.fileName;
-        if (
-          latestDSRFile.indexOf(now) > -1 ||
-          latestDSRFile.indexOf(beforeOneDay) > -1 ||
-          latestDSRFile.indexOf(twoDayBefore) > -1
-        ) {
-          try {
-            const response = await publicFetch.patch(
-              `/update-task/${tasks.result[0]._id}`,
-              {
-                name: tasks.result[0].name,
-                description: tasks.result[0].description,
-                flag: tasks.result[0].flag,
-                isDSRReport: true,
-                batchCount: tasks.result[0].batchCount,
-                isGeminiReport: tasks.result[0].isGeminiReport,
-                DSRReportNote: tasks.result[0].DSRReportNote,
-                GeminiReportNote: tasks.result[0].GeminiReportNote,
-              }
-            );
-            console.log(response);
-            getTask();
-          } catch (err) {
-            console.log(err.response.data);
+      console.log(filePath.name.indexOf());
+      const latestGeminiFile = GeminifileGetResponse?.data?.result[0]?.fileName;
+      if (filePath.name.toLowerCase().indexOf("dsr_note") > -1) {
+        if (DSRfileGetResponse.data.result.length > 0) {
+          console.log("dsr uploaded");
+          const latestDSRFile = DSRfileGetResponse?.data?.result[0]?.fileName;
+          if (
+            latestDSRFile.indexOf(now) > -1 ||
+            latestDSRFile.indexOf(beforeOneDay) > -1 ||
+            latestDSRFile.indexOf(twoDayBefore) > -1
+          ) {
+            console.log(latestDSRFile);
+            try {
+              const response = await publicFetch.patch(
+                `/update-task/${tasks.result[0]._id}`,
+                {
+                  name: tasks.result[0].name,
+                  description: tasks.result[0].description,
+                  flag: tasks.result[0].flag,
+                  isDSRReport: true,
+                  batchCount: tasks.result[0].batchCount,
+                  isGeminiReport: tasks.result[0].isGeminiReport,
+                  releaseTag: tasks.result[0].releaseTag,
+                  clientID: tasks.result[0].clientID,
+                  DSRReportNote: "",
+                  GeminiReportNote: tasks.result[0].GeminiReportNote,
+                }
+              );
+              console.log(response);
+              getTask();
+            } catch (err) {
+              console.log(err.response.data);
+            }
           }
         }
       }
-      if (GeminifileGetResponse.data.result.length > 0) {
-        if (
-          latestGeminiFile.indexOf(now) > -1 ||
-          latestGeminiFile.indexOf(beforeOneDay) > -1 ||
-          latestGeminiFile.indexOf(twoDayBefore) > -1
-        ) {
-          try {
-            const response = await publicFetch.patch(
-              `/update-task/${tasks.result[0]._id}`,
-              {
-                name: tasks.result[0].name,
-                description: tasks.result[0].description,
-                flag: tasks.result[0].flag,
-                isDSRReport: tasks.result[0].isDSRReport,
-                batchCount: tasks.result[0].batchCount,
-                isGeminiReport: true,
-                DSRReportNote: tasks.result[0].DSRReportNote,
-                GeminiReportNote: tasks.result[0].GeminiReportNote,
-              }
-            );
-            console.log(response);
-            getTask();
-          } catch (err) {
-            console.log(err.response.data);
+      if (filePath.name.toLowerCase().indexOf("gemini_report") > -1) {
+        console.log("gemini uploaded");
+
+        if (GeminifileGetResponse.data.result.length > 0) {
+          if (
+            latestGeminiFile.indexOf(now) > -1 ||
+            latestGeminiFile.indexOf(beforeOneDay) > -1 ||
+            latestGeminiFile.indexOf(twoDayBefore) > -1
+          ) {
+            try {
+              const response = await publicFetch.patch(
+                `/update-task/${tasks.result[0]._id}`,
+                {
+                  name: tasks.result[0].name,
+                  description: tasks.result[0].description,
+                  flag: tasks.result[0].flag,
+                  isDSRReport: tasks.result[0].isDSRReport,
+                  batchCount: tasks.result[0].batchCount,
+                  isGeminiReport: true,
+                  releaseTag: tasks.result[0].releaseTag,
+                  clientID: tasks.result[0].clientID,
+                  DSRReportNote: tasks.result[0].DSRReportNote,
+                  GeminiReportNote: "",
+                }
+              );
+              console.log(response);
+              getTask();
+            } catch (err) {
+              console.log(err.response.data);
+            }
           }
         }
       }
@@ -215,66 +235,150 @@ export default function TaskDetail() {
       {tasks.success ? (
         <div className="container px-4 mx-auto py-2">
           <div className="flex flex-row justify-between w-full pb-2 divide-y">
-            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
-              {tasks.result[0].name}
+            <h2 class="text-3xl font-semibold leading-7 text-gray-900 sm:truncate  sm:tracking-tight">
+              CDF Prep for {tasks.result[0].name} - Oct 2022
             </h2>
             <button
-              className="inline-flex items-center justify-center px-4 py-1 ml-8 text-base font-medium text-white bg-blue-700 border border-transparent rounded-md shadow-sm whitespace-nowrap hover:bg-blue-800"
+              className="inline-flex items-center justify-center px-4 py-1 ml-8 text-base font-medium text-gray-700 bg-gray-300 border border-transparent rounded-md shadow-sm whitespace-nowrap hover:bg-gray-400"
               onClick={() => setShowModal(true)}
             >
               Upload file
             </button>
-          </div>
-          <p className="capitalize  bg-stone-700">
-            Client: {tasks.result[0].name}
-          </p>
-          <p>
-            Phase:
-            <span
-              className="text-white text-sm px-4 py-1 ml-2 rounded-full "
-              style={{ textTransform: "capitalize", backgroundColor: "green" }}
+            {/* <button
+              className="inline-flex items-center justify-center px-4 py-1 ml-8 text-base font-medium text-white bg-blue-700 border border-transparent rounded-md shadow-sm whitespace-nowrap hover:bg-blue-800"
+              onClick={() => setShowModal(true)}
             >
-              {tasks.result[0].flag}
-            </span>
-          </p>
-
-          <p>Descriptions: {tasks.result[0].description}</p>
-          <>
-            {tasks.result[0].DSRReportNote !== "" && (
+              Upload file
+            </button> */}
+          </div>
+          <div class="details mt-3">
+            <p className="font-medium">Details</p>
+            <div className="flex  py-0.5">
+              <div className="flex-initial w-64 text-gray-700">Type:</div>
+              <div className="flex-auto w-96 text-gray-700">CDF Data Prep</div>
+            </div>
+            <div className="flex  py-0.5">
+              <div className="flex-initial w-64 text-gray-700">Epic Link:</div>
+              <div className="flex-auto w-fit  ">
+                <span className="bg-indigo-900 text-white w-fit px-1.5 rounded-sm text-sm">
+                  {tasks.result[0].name}
+                </span>
+              </div>
+            </div>
+            <div className="flex  py-0.5">
+              <div className="flex-initial w-64 text-gray-700">
+                Application Product:
+              </div>
+              <div className="flex-auto w-96 text-gray-700">MI</div>
+            </div>
+            <div className="flex  py-0.5">
+              <div className="flex-initial w-64 text-gray-700">
+                Verscend Application ID:
+              </div>
+              <div className="flex-auto w-96 text-gray-700">
+                {tasks.result[0].clientID}
+              </div>
+            </div>
+            <div className="flex  py-0.5">
+              <div className="flex-initial w-64 text-gray-700">
+                Production Application Name:
+              </div>
+              <div className="flex-auto w-96 text-gray-700">
+                {tasks.result[0].name}
+              </div>
+            </div>
+            <div className="flex  py-0.5">
+              <div className="flex-initial w-64 text-gray-700">Status:</div>
+              <div className="flex-auto w-96 text-gray-700 uppercase text-sm  ">
+                <span className="bg-blue-600 text-white w-fit px-1.5 rounded-sm font-medium">
+                  {tasks.result[0].flag}
+                </span>
+              </div>
+            </div>
+            <div className="flex  py-0.5">
+              <div className="flex-initial w-64 text-gray-700">
+                Release Tag:
+              </div>
+              <div className="flex-auto w-96 text-gray-700">
+                {tasks.result[0].releaseTag}
+              </div>
+            </div>
+            <div className="flex  py-0.5">
+              <div className="flex-initial w-64 text-gray-700">
+                Description:
+              </div>
+              <div className="flex-auto w-96 text-gray-700">
+                {tasks.result[0].description}
+              </div>
+            </div>
+          </div>
+          <div className="notes mt-4">
+            {tasks.result[0].DSRReportNote !== "" ||
+            tasks.result[0].GeminiReportNote !== "" ? (
+              <>
+                <p className="font-medium">Files Notes</p>
+                {tasks.result[0].DSRReportNote !== "" ? (
+                  <div className="flex  py-0.5">
+                    <div className="flex-initial w-64 text-gray-700">
+                      DSR Report Note:
+                    </div>
+                    <div className="flex-auto w-96 text-gray-700">
+                      <p> {tasks.result[0].DSRReportNote}</p>
+                    </div>
+                  </div>
+                ) : null}
+                {tasks.result[0].GeminiReportNote !== "" ? (
+                  <div className="flex  py-0.5">
+                    <div className="flex-initial w-64 text-gray-700">
+                      Gemini Report Note:
+                    </div>
+                    <div className="flex-auto w-96 text-gray-700">
+                      <p> {tasks.result[0].GeminiReportNote}</p>
+                    </div>
+                  </div>
+                ) : null}
+              </>
+            ) : null}
+            {/* {tasks.result[0].DSRReportNote !== "" && (
               <>
                 {tasks.result[0].DSRReportNote !== "" && (
-                  <p>DSR Report Note: {tasks.result[0].DSRReportNote}</p>
+                  <div className="flex  py-0.5">
+                    <div className="flex-initial w-64 text-gray-700">
+                      DSR Report Note:
+                    </div>
+                    <div className="flex-auto w-96 text-gray-700">
+                      <p> {tasks.result[0].DSRReportNote}</p>
+                    </div>
+                  </div>
                 )}
-                {/* {tasks.result[0].GeminiReportNote !== "" && (
-                  <p>Gemini Report Note: {tasks.result[0].GeminiReportNote}</p>
-                )} */}
+                
               </>
-            )}
-          </>
-          {tasks.result[0].GeminiReportNote != "" && (
-            <>
-              {/* <p>Note:</p> */}
-              {tasks.result[0].DSRReportNote !== "" && (
-                <p>Gemini Report Note: {tasks.result[0].GeminiReportNote}</p>
-              )}
-              {/* {tasks.result[0].GeminiReportNote !== "" && (
-                  <p>Gemini Report Note: {tasks.result[0].GeminiReportNote}</p>
-                )} */}
-            </>
-          )}
-          <p>Files: </p>
+            )} */}
+          </div>
+
+          <p className="font-medium mt-3">Links</p>
           {files.success ? (
             <>
               {files.result.map((file) => (
                 // <Link to={`${FILE_URL}${file.pathName}`}>
                 <div className="flex flex-col">
-                  <a
-                    className="text-blue-500 underline"
-                    href={`${FILE_URL}${file.filePath}`}
-                    target="_blank"
-                  >
-                    {file.fileName}
-                  </a>
+                  <div className=" flex justify-between">
+                    <a
+                      className="text-blue-500 underline text-sm font-medium cursor-pointer"
+                      href={`${FILE_URL}${file.filePath}`}
+                      target="_blank"
+                    >
+                      {file.fileName}
+                    </a>
+                    <span
+                      className="text-red-600 text-sm underline cursor-pointer"
+                      onClick={() => {
+                        deleteFile(file._id);
+                      }}
+                    >
+                      Delete
+                    </span>
+                  </div>
                 </div>
                 // </Link>
               ))}

@@ -363,6 +363,7 @@ export default function Landing() {
                           {/*content*/}
                           <div className="relative flex flex-col w-full bg-white border-0 rounded-lg shadow-lg outline-none focus:outline-none">
                             {/*header*/}
+
                             <div className="flex items-start justify-between p-5 border-b border-solid rounded-t border-slate-200">
                               <h3 className="text-3xl font-semibold">
                                 {modalDetail.name}
@@ -543,16 +544,18 @@ export default function Landing() {
                     <div class="w-full rounded overflow-hidden   bg-gray-100 mb-4">
                       {/* <img class="w--full" src="/img/card-top.jpg" alt="Sunset in the mountains"> */}
                       <div class="p-3">
-                        <div class="font-bold text-lg mb-2">
-                          CDF Prep for {task.name}
-                        </div>
-                        <p className="bg-indigo-800 text-white text-sm rounded-sm px-2 w-fit">
-                          {task.name}
-                        </p>
+                        <Link to={`/task/${task._id}`}>
+                          <div class="font-bold text-lg mb-2">
+                            CDF Prep for {task.name}
+                          </div>
+                          <p className="bg-indigo-800 text-white text-sm rounded-sm px-2 w-fit">
+                            {task.name}
+                          </p>
 
-                        <p class="text-gray-700 text-base mt-1">
-                          {task.description}
-                        </p>
+                          <p class="text-gray-700 text-base mt-1">
+                            {task.description}
+                          </p>
+                        </Link>
                       </div>
                       <div class="flex gap-2 px-3 pt-4 pb-2 items-center text-center">
                         <button
@@ -723,7 +726,7 @@ export default function Landing() {
                     <div class="w-full rounded overflow-hidden   bg-gray-100 mb-4">
                       {/* <img class="w--full" src="/img/card-top.jpg" alt="Sunset in the mountains"> */}
                       <div class="p-3">
-                        <Link to={`/test/${task._id}`}>
+                        <Link to={`/task/${task._id}`}>
                           <div class="font-bold text-lg mb-2">
                             CDF Prep for {task.name}
                           </div>
