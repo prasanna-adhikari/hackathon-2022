@@ -213,22 +213,34 @@ export default function TaskDetail() {
     <>
       <TopBar />
       {tasks.success ? (
-        <div className="container px-4 mx-auto">
-          <div className="flex flex-row justify-between w-full">
-            <p>{tasks.result[0].name}</p>
-            <button onClick={() => setShowModal(true)}>Upload file</button>
+        <div className="container px-4 mx-auto py-2">
+          <div className="flex flex-row justify-between w-full pb-2 divide-y">
+            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+              {tasks.result[0].name}
+            </h2>
+            <button
+              className="inline-flex items-center justify-center px-4 py-1 ml-8 text-base font-medium text-white bg-blue-700 border border-transparent rounded-md shadow-sm whitespace-nowrap hover:bg-blue-800"
+              onClick={() => setShowModal(true)}
+            >
+              Upload file
+            </button>
           </div>
-          <p>{tasks.result[0].flag}</p>
-          {tasks.result[0].flag === "batch import" ? (
-            <p>Batch: {tasks.result[0].batchCount}</p>
-          ) : tasks.result[0].flag === "batch dsr" ? (
-            <p>Batch: {tasks.result[0].batchCount}</p>
-          ) : (
-            <p>Kickoff</p>
-          )}
-          <p>{tasks.result[0].description}</p>
+          <p className="capitalize  bg-stone-700">
+            Client: {tasks.result[0].name}
+          </p>
+          <p>
+            Phase:
+            <span
+              className="text-white text-sm px-4 py-1 ml-2 rounded-full "
+              style={{ textTransform: "capitalize", backgroundColor: "green" }}
+            >
+              {tasks.result[0].flag}
+            </span>
+          </p>
+
+          <p>Descriptions: {tasks.result[0].description}</p>
           <>
-            {tasks.result[0].DSRReportNote != "" && (
+            {tasks.result[0].DSRReportNote !== "" && (
               <>
                 {tasks.result[0].DSRReportNote !== "" && (
                   <p>DSR Report Note: {tasks.result[0].DSRReportNote}</p>

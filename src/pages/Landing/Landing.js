@@ -24,6 +24,8 @@ export default function Landing() {
   const [taskName, setTaskName] = useState("");
   const [taskDescription, setTaskDescription] = useState("");
   const [phase, setPhase] = useState("");
+  const [clientID, setClientID] = useState("");
+  const [releaseTag, setReleaseTag] = useState("");
   const [isBatch, setIsBatch] = useState(false);
   //  edit task
   const [editTaskDetail, setEditTaskDetail] = useState([]);
@@ -31,6 +33,8 @@ export default function Landing() {
   const [editTaskName, setEditTaskName] = useState("");
   const [editTaskDescription, setEditTaskDescription] = useState("");
   const [editPhase, setEditPhase] = useState("");
+  const [editClientID, setEditClientID] = useState("");
+  const [editReleaseTag, setEditReleaseTag] = useState("");
   const [editisBatch, setEditIsBatch] = useState(false);
 
   const history = useNavigate();
@@ -53,6 +57,8 @@ export default function Landing() {
           flag: "dsr",
           isDSRReport: task.isDSRReport,
           isGeminiReport: task.isGeminiReport,
+          clientID: task.clientID,
+          releaseTag: task.releaseTag,
           DSRReportNote: task.DSRReportNote,
           GeminiReportNote: task.GeminiReportNote,
         });
@@ -74,6 +80,8 @@ export default function Landing() {
           description: task.description,
           flag: "batch dsr",
           isDSRReport: task.isDSRReport,
+          clientID: task.clientID,
+          releaseTag: task.releaseTag,
           isGeminiReport: task.isGeminiReport,
           DSRReportNote: task.DSRReportNote,
           GeminiReportNote: task.GeminiReportNote,
@@ -96,12 +104,18 @@ export default function Landing() {
         description: editTaskDescription,
 
         flag: editPhase,
+        clientID: editClientID,
+        releaseTag: editReleaseTag,
         isDSRReport: false,
         isGeminiReport: false,
         DSRReportNote: "",
         GeminiReportNote: "",
       });
+
       console.log(response);
+      setShowEditModal(false);
+      toast.success(response.data.message);
+
       setTasks(response.data);
     } catch (err) {
       console.log(err.response);
@@ -113,9 +127,11 @@ export default function Landing() {
         name: taskName,
         description: taskDescription,
         flag: phase,
+        clientID: clientID,
+        releaseTag: releaseTag,
       });
       console.log(response);
-      toast(response.data.message);
+      toast.success(response.data.message);
       getTasks();
       setAddShowModal(false);
       setTaskName("");
@@ -123,6 +139,8 @@ export default function Landing() {
       setPhase("");
       // setTasks(response.data);
     } catch (err) {
+      toast.error(err.response.data.message);
+
       console.log(err.response);
     }
   };
@@ -148,7 +166,8 @@ export default function Landing() {
           flag: "dsr",
           isDSRReport: modalDetail.isDSRReport,
           isGeminiReport: modalDetail.isGeminiReport,
-
+          clientID: modalDetail.clientID,
+          releaseTag: modalDetail.releaseTag,
           DSRReportNote: dsrRemark,
           GeminiReportNote: geminiRemark,
         }
@@ -172,12 +191,14 @@ export default function Landing() {
           flag: "batch dsr",
           isDSRReport: modalDetail.isDSRReport,
           isGeminiReport: modalDetail.isGeminiReport,
+          clientID: modalDetail.clientID,
+          releaseTag: modalDetail.releaseTag,
           DSRReportNote: dsrRemark,
           GeminiReportNote: geminiRemark,
         }
       );
       setTasks(response.data);
-      setShowModal(false);
+      setShowBatchModal(false);
     } catch (err) {
       console.log(err.response.data);
     }
@@ -202,6 +223,8 @@ export default function Landing() {
         description: task.description,
         flag: "import",
         isDSRReport: task.isDSRReport,
+        clientID: task.clientID,
+        releaseTag: task.releaseTag,
         isGeminiReport: task.isGeminiReport,
         DSRReportNote: task.DSRReportNote,
         GeminiReportNote: task.GeminiReportNote,
@@ -219,6 +242,8 @@ export default function Landing() {
         flag: "batch import",
         isDSRReport: task.isDSRReport,
         isGeminiReport: task.isGeminiReport,
+        clientID: task.clientID,
+        releaseTag: task.releaseTag,
         DSRReportNote: task.DSRReportNote,
         GeminiReportNote: task.GeminiReportNote,
       });
@@ -238,6 +263,8 @@ export default function Landing() {
     setEditTaskID(task._id);
     setEditTaskName(task.name);
     setEditTaskDescription(task.description);
+    setEditClientID(task.clientID);
+    setEditReleaseTag(task.releaseTag);
     setEditPhase(task.flag);
   };
 
@@ -260,10 +287,15 @@ export default function Landing() {
                     <div class="w-full rounded overflow-hidden   bg-gray-100 mb-4">
                       {/* <img class="w--full" src="/img/card-top.jpg" alt="Sunset in the mountains"> */}
                       <div class="p-3">
-                        <Link to={`/test/${task._id}`}>
-                          <div class="font-bold text-xl mb-2">{task.name}</div>
+                        <Link to={`/task/${task._id}`}>
+                          <div class="font-bold text-lg mb-2">
+                            CDF Prep for {task.name}
+                          </div>
+                          <p className="bg-indigo-800 text-white text-sm rounded-sm px-2 w-fit">
+                            {task.name}
+                          </p>
 
-                          <p class="text-gray-700 text-base">
+                          <p class="text-gray-700 text-base mt-1">
                             {task.description}
                           </p>
                         </Link>
@@ -443,10 +475,15 @@ export default function Landing() {
                     <div class="w-full rounded overflow-hidden   bg-gray-100 mb-4">
                       {/* <img class="w--full" src="/img/card-top.jpg" alt="Sunset in the mountains"> */}
                       <div class="p-3">
-                        <Link to={`/test/${task._id}`}>
-                          <div class="font-bold text-xl mb-2">{task.name}</div>
+                        <Link to={`/task/${task._id}`}>
+                          <div class="font-bold text-lg mb-2">
+                            CDF Prep for {task.name}
+                          </div>
+                          <p className="bg-pink-600 text-white text-sm rounded-sm px-2 w-fit">
+                            {task.name}
+                          </p>
 
-                          <p class="text-gray-700 text-base">
+                          <p class="text-gray-700 text-base mt-1">
                             {task.description}
                           </p>
                         </Link>
@@ -506,13 +543,16 @@ export default function Landing() {
                     <div class="w-full rounded overflow-hidden   bg-gray-100 mb-4">
                       {/* <img class="w--full" src="/img/card-top.jpg" alt="Sunset in the mountains"> */}
                       <div class="p-3">
-                        <Link to={`/test/${task._id}`}>
-                          <div class="font-bold text-xl mb-2">{task.name}</div>
+                        <div class="font-bold text-lg mb-2">
+                          CDF Prep for {task.name}
+                        </div>
+                        <p className="bg-indigo-800 text-white text-sm rounded-sm px-2 w-fit">
+                          {task.name}
+                        </p>
 
-                          <p class="text-gray-700 text-base">
-                            {task.description}
-                          </p>
-                        </Link>
+                        <p class="text-gray-700 text-base mt-1">
+                          {task.description}
+                        </p>
                       </div>
                       <div class="flex gap-2 px-3 pt-4 pb-2 items-center text-center">
                         <button
@@ -684,9 +724,14 @@ export default function Landing() {
                       {/* <img class="w--full" src="/img/card-top.jpg" alt="Sunset in the mountains"> */}
                       <div class="p-3">
                         <Link to={`/test/${task._id}`}>
-                          <div class="font-bold text-xl mb-2">{task.name}</div>
+                          <div class="font-bold text-lg mb-2">
+                            CDF Prep for {task.name}
+                          </div>
+                          <p className="bg-pink-600 text-white text-sm rounded-sm px-2 w-fit">
+                            {task.name}
+                          </p>
 
-                          <p class="text-gray-700 text-base">
+                          <p class="text-gray-700 text-base mt-1">
                             {task.description}
                           </p>
                         </Link>
@@ -769,6 +814,40 @@ export default function Landing() {
                               type="text"
                               // placeholder="Write a reason"
                               onChange={(e) => setTaskName(e.target.value)}
+                              required
+                            ></input>
+                          </div>
+                          <div className="flex flex-row justify-between mb-3">
+                            <label
+                              class="block text-gray-700 text-md font-bold mb-2"
+                              for="taskName"
+                              required
+                            >
+                              Verscend Application ID
+                            </label>
+                            <input
+                              class=" appearance-none border rounded w-6/12 py-2 px-3 text-gray-700 leading-tight focus:outline-none "
+                              id="taskName"
+                              type="text"
+                              // placeholder="Write a reason"
+                              onChange={(e) => setClientID(e.target.value)}
+                              required
+                            ></input>
+                          </div>
+                          <div className="flex flex-row justify-between mb-3">
+                            <label
+                              class="block text-gray-700 text-md font-bold mb-2"
+                              for="taskName"
+                            >
+                              Release Tag
+                            </label>
+                            <input
+                              class=" appearance-none border rounded w-6/12 py-2 px-3 text-gray-700 leading-tight focus:outline-none "
+                              id="taskName"
+                              type="text"
+                              required
+                              // placeholder="Write a reason"
+                              onChange={(e) => setReleaseTag(e.target.value)}
                             ></input>
                           </div>
                           <div className="flex flex-row justify-between mb-3">
@@ -782,6 +861,7 @@ export default function Landing() {
                               id="countries"
                               class="rounded border w-1/2 px-2 py-2"
                               onChange={(e) => setPhase(e.target.value)}
+                              required
                             >
                               <option selected>Select Phase</option>
                               <option value="batch import">Batch Import</option>
@@ -789,13 +869,6 @@ export default function Landing() {
                               <option value="import">Import</option>
                               {/* <option value="dsr">DSR</option> */}
                             </select>
-                            {/* <input
-                              class=" appearance-none border rounded w-6/12 py-2 px-3 text-gray-700 leading-tight focus:outline-none "
-                              id="taskName"
-                              type="text"
-                              // placeholder="Write a reason"
-                              onChange={(e) => setPhase(e.target.value)}
-                            ></input> */}
                           </div>
 
                           <div className="flex flex-row justify-between mt-4">
@@ -817,10 +890,6 @@ export default function Landing() {
                             ></textarea>
                           </div>
                         </div>
-                        <label className="flex flex-row justify-between mt-2">
-                          Note: Please leave the Batch Number 0 if don't have
-                          batch processing.
-                        </label>
                       </div>
 
                       {/*footer*/}
@@ -891,6 +960,41 @@ export default function Landing() {
                           // placeholder="Write a reason"
                           value={editTaskName}
                           onChange={(e) => setEditTaskName(e.target.value)}
+                        ></input>
+                      </div>
+                      <div className="flex flex-row justify-between mb-3">
+                        <label
+                          class="block text-gray-700 text-md font-bold mb-2"
+                          for="taskName"
+                          required
+                        >
+                          Verscend Application ID
+                        </label>
+                        <input
+                          class=" appearance-none border rounded w-6/12 py-2 px-3 text-gray-700 leading-tight focus:outline-none "
+                          id="taskName"
+                          type="text"
+                          value={editClientID}
+                          // placeholder="Write a reason"
+                          onChange={(e) => setEditClientID(e.target.value)}
+                          required
+                        ></input>
+                      </div>
+                      <div className="flex flex-row justify-between mb-3">
+                        <label
+                          class="block text-gray-700 text-md font-bold mb-2"
+                          for="taskName"
+                        >
+                          Release Tag
+                        </label>
+                        <input
+                          class=" appearance-none border rounded w-6/12 py-2 px-3 text-gray-700 leading-tight focus:outline-none "
+                          id="taskName"
+                          type="text"
+                          required
+                          value={editReleaseTag}
+                          // placeholder="Write a reason"
+                          onChange={(e) => setEditReleaseTag(e.target.value)}
                         ></input>
                       </div>
                       <div className="flex flex-row justify-between mb-3">
