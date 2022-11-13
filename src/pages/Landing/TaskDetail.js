@@ -86,6 +86,7 @@ export default function TaskDetail() {
                   isGeminiReport: tasks.result[0].isGeminiReport,
                   releaseTag: tasks.result[0].releaseTag,
                   clientID: tasks.result[0].clientID,
+                  assignee: tasks.result[0].assignee,
                   DSRReportNote: "",
                   GeminiReportNote: tasks.result[0].GeminiReportNote,
                 }
@@ -120,6 +121,8 @@ export default function TaskDetail() {
                   releaseTag: tasks.result[0].releaseTag,
                   clientID: tasks.result[0].clientID,
                   DSRReportNote: tasks.result[0].DSRReportNote,
+                  assignee: tasks.result[0].assignee,
+
                   GeminiReportNote: "",
                 }
               );
@@ -309,6 +312,12 @@ export default function TaskDetail() {
               </div>
               <div className="flex-auto w-96 text-gray-700">
                 {tasks.result[0].description}
+              </div>
+            </div>
+            <div className="flex  py-0.5">
+              <div className="flex-initial w-64 text-gray-700">Assignee:</div>
+              <div className="flex-auto w-96  text-blue-700 underline">
+                {tasks.result[0].assignee}
               </div>
             </div>
           </div>

@@ -19,6 +19,7 @@ export default function Landing() {
   const [showAddModal, setAddShowModal] = React.useState(false);
   const [showBatchModal, setShowBatchModal] = React.useState(false);
   const [showEditModal, setShowEditModal] = React.useState(false);
+  const [assignee, setAssignee] = useState("");
 
   // add task
   const [taskName, setTaskName] = useState("");
@@ -61,6 +62,7 @@ export default function Landing() {
           releaseTag: task.releaseTag,
           DSRReportNote: task.DSRReportNote,
           GeminiReportNote: task.GeminiReportNote,
+          assignee: "Shailee Gorkhali",
         });
         setTasks(response.data);
       } catch (err) {
@@ -84,6 +86,8 @@ export default function Landing() {
           releaseTag: task.releaseTag,
           isGeminiReport: task.isGeminiReport,
           DSRReportNote: task.DSRReportNote,
+          assignee: "Shailee Gorkhali",
+
           GeminiReportNote: task.GeminiReportNote,
         });
         setTasks(response.data);
@@ -99,6 +103,12 @@ export default function Landing() {
   // edit task
   const editTask = async () => {
     try {
+      let editAssignee;
+      if (editPhase === "dsr" || editPhase === "batch dsr") {
+        editAssignee = "Shailee Gorkhali";
+      } else {
+        editAssignee = "Deepak Maharjan";
+      }
       const response = await publicFetch.patch(`/update-task/${editTaskID}`, {
         name: editTaskName,
         description: editTaskDescription,
@@ -108,6 +118,7 @@ export default function Landing() {
         releaseTag: editReleaseTag,
         isDSRReport: false,
         isGeminiReport: false,
+        assignee: editAssignee,
         DSRReportNote: "",
         GeminiReportNote: "",
       });
@@ -123,12 +134,19 @@ export default function Landing() {
   };
   const addTask = async () => {
     try {
+      let taskAssignee;
+      if (phase === "dsr" || phase === "batch dsr") {
+        taskAssignee = "Shailee Gorkhali";
+      } else {
+        taskAssignee = "Deepak Maharjan";
+      }
       const response = await publicFetch.post(`/add-task`, {
         name: taskName,
         description: taskDescription,
         flag: phase,
         clientID: clientID,
         releaseTag: releaseTag,
+        assignee: taskAssignee,
       });
       console.log(response);
       toast.success(response.data.message);
@@ -169,6 +187,8 @@ export default function Landing() {
           clientID: modalDetail.clientID,
           releaseTag: modalDetail.releaseTag,
           DSRReportNote: dsrRemark,
+          assignee: "Shailee Gorkhali",
+
           GeminiReportNote: geminiRemark,
         }
       );
@@ -194,6 +214,8 @@ export default function Landing() {
           clientID: modalDetail.clientID,
           releaseTag: modalDetail.releaseTag,
           DSRReportNote: dsrRemark,
+          assignee: "Shailee Gorkhali",
+
           GeminiReportNote: geminiRemark,
         }
       );
@@ -226,6 +248,7 @@ export default function Landing() {
         clientID: task.clientID,
         releaseTag: task.releaseTag,
         isGeminiReport: task.isGeminiReport,
+        assignee: "Deepak Maharjan",
         DSRReportNote: task.DSRReportNote,
         GeminiReportNote: task.GeminiReportNote,
       });
@@ -244,6 +267,8 @@ export default function Landing() {
         isGeminiReport: task.isGeminiReport,
         clientID: task.clientID,
         releaseTag: task.releaseTag,
+        assignee: "Deepak Maharjan",
+
         DSRReportNote: task.DSRReportNote,
         GeminiReportNote: task.GeminiReportNote,
       });
@@ -277,7 +302,7 @@ export default function Landing() {
         {tasks.success ? (
           <div class="grid grid-cols-4 gap-6 mt-3 p-2">
             <div class="bg-white px-4 py-1 rounded-sm w-80 min-h-screen">
-              <h1 className="p-3 font-bold text-center text-md">
+              <h1 className="p-3 font-bold text-center text-md ">
                 {" "}
                 Batch Import
               </h1>
@@ -288,8 +313,24 @@ export default function Landing() {
                       {/* <img class="w--full" src="/img/card-top.jpg" alt="Sunset in the mountains"> */}
                       <div class="p-3">
                         <Link to={`/task/${task._id}`}>
-                          <div class="font-bold text-lg mb-2">
-                            CDF Prep for {task.name}
+                          <div className="flex justify-between">
+                            <div class="font-bold text-lg mb-2 w-64">
+                              CDF Prep for {task.name}
+                            </div>
+                            <div
+                              className="w-[52px] h-[46px] rounded-full  bg-gray-500  flex 
+ justify-center items-center text-white font-xl font-medium text-lg "
+                            >
+                              {task?.assignee
+                                ?.split(" ")[0]
+                                .charAt(0)
+                                .toUpperCase()}
+                              {task?.assignee
+                                ?.split(" ")
+                                .pop()
+                                .charAt(0)
+                                .toUpperCase()}
+                            </div>
                           </div>
                           <p className="bg-indigo-800 text-white text-sm rounded-sm px-2 w-fit">
                             {task.name}
@@ -477,8 +518,24 @@ export default function Landing() {
                       {/* <img class="w--full" src="/img/card-top.jpg" alt="Sunset in the mountains"> */}
                       <div class="p-3">
                         <Link to={`/task/${task._id}`}>
-                          <div class="font-bold text-lg mb-2">
-                            CDF Prep for {task.name}
+                          <div className="flex justify-between">
+                            <div class="font-bold text-lg mb-2 w-64">
+                              CDF Prep for {task.name}
+                            </div>
+                            <div
+                              className="w-[52px] h-[46px] rounded-full  bg-gray-500  flex 
+ justify-center items-center text-white font-xl font-medium text-lg "
+                            >
+                              {task?.assignee
+                                ?.split(" ")[0]
+                                .charAt(0)
+                                .toUpperCase()}
+                              {task?.assignee
+                                ?.split(" ")
+                                .pop()
+                                .charAt(0)
+                                .toUpperCase()}
+                            </div>
                           </div>
                           <p className="bg-pink-600 text-white text-sm rounded-sm px-2 w-fit">
                             {task.name}
@@ -545,8 +602,24 @@ export default function Landing() {
                       {/* <img class="w--full" src="/img/card-top.jpg" alt="Sunset in the mountains"> */}
                       <div class="p-3">
                         <Link to={`/task/${task._id}`}>
-                          <div class="font-bold text-lg mb-2">
-                            CDF Prep for {task.name}
+                          <div className="flex justify-between">
+                            <div class="font-bold text-lg mb-2 w-64">
+                              CDF Prep for {task.name}
+                            </div>
+                            <div
+                              className="w-[52px] h-[46px] rounded-full  bg-gray-500  flex 
+ justify-center items-center text-white font-xl font-medium text-lg "
+                            >
+                              {task?.assignee
+                                ?.split(" ")[0]
+                                .charAt(0)
+                                .toUpperCase()}
+                              {task?.assignee
+                                ?.split(" ")
+                                .pop()
+                                .charAt(0)
+                                .toUpperCase()}
+                            </div>
                           </div>
                           <p className="bg-indigo-800 text-white text-sm rounded-sm px-2 w-fit">
                             {task.name}
@@ -727,8 +800,24 @@ export default function Landing() {
                       {/* <img class="w--full" src="/img/card-top.jpg" alt="Sunset in the mountains"> */}
                       <div class="p-3">
                         <Link to={`/task/${task._id}`}>
-                          <div class="font-bold text-lg mb-2">
-                            CDF Prep for {task.name}
+                          <div className="flex justify-between">
+                            <div class="font-bold text-lg mb-2 w-64">
+                              CDF Prep for {task.name}
+                            </div>
+                            <div
+                              className="w-[52px] h-[46px] rounded-full  bg-gray-500  flex 
+ justify-center items-center text-white font-xl font-medium text-lg "
+                            >
+                              {task?.assignee
+                                ?.split(" ")[0]
+                                .charAt(0)
+                                .toUpperCase()}
+                              {task?.assignee
+                                ?.split(" ")
+                                .pop()
+                                .charAt(0)
+                                .toUpperCase()}
+                            </div>
                           </div>
                           <p className="bg-pink-600 text-white text-sm rounded-sm px-2 w-fit">
                             {task.name}
